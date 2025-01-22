@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -33,6 +34,10 @@ namespace PixelPainter
             InitializeComponent();
         }
 
+        private bool isImageLoaded = false; //불러온이미지없이 연산시 예외처리
+        private bool isImageOp = false;     //저장할 연산이미지없을시 예외처리
+        Mat dst = new Mat();
+
         private void openBTN_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -41,24 +46,83 @@ namespace PixelPainter
                 pictureBox1.Load(openFileDialog1.FileName);
 
                 Mat src1 = Cv2.ImRead(openFileDialog1.FileName);
-                //pictureBox1.Image = BitmapConverter.ToBitmap(src1);
+                pictureBox1.Image = BitmapConverter.ToBitmap(src1);
+
+                isImageLoaded = true;  
 
             }
         }
 
         private void saveBTN_Click(object sender, EventArgs e)
         {
+            if (!isImageOp)
+            {
+                MessageBox.Show("저장할 이미지가 없습니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
+            // SaveFileDialog 설정
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Title = "이미지 저장",
+                Filter = "JPEG Files|*.jpg|PNG Files|*.png|Bitmap Files|*.bmp|All Files|*.*",
+                DefaultExt = "jpg",
+                AddExtension = true
+            };
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = saveFileDialog.FileName;
+                string fileExtension = System.IO.Path.GetExtension(filePath).ToLower(); // 확장자 추출
+
+                // 저장할 Mat 객체 (예: dst에 연산된 결과가 있다고 가정)
+                Mat imageToSave = dst;
+
+                try
+                {
+                    // 확장자에 따른 저장 형식 설정
+                    switch (fileExtension)
+                    {
+                        case ".jpg":
+                        case ".jpeg":
+                            Cv2.ImWrite(filePath, imageToSave, new ImageEncodingParam(ImwriteFlags.JpegQuality, 90)); // JPEG 품질 설정
+                            break;
+
+                        case ".png":
+                            Cv2.ImWrite(filePath, imageToSave, new ImageEncodingParam(ImwriteFlags.PngCompression, 3)); // PNG 압축 설정
+                            break;
+
+                        case ".bmp":
+                            Cv2.ImWrite(filePath, imageToSave);
+                            break;
+
+                        default:
+                            MessageBox.Show("지원하지 않는 파일 형식입니다. JPG, PNG, BMP만 저장 가능합니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                    }
+
+                    MessageBox.Show("이미지가 성공적으로 저장되었습니다.", "성공", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"이미지를 저장하는 동안 오류가 발생했습니다.\n{ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         private void OpcomboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (!isImageLoaded)
+            {
+                MessageBox.Show("먼저 이미지를 열어주세요.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             Mat src1 = Cv2.ImRead(openFileDialog1.FileName);
             Mat src2 = new Mat(src1.Size(), MatType.CV_8UC3, new Scalar(0, 0, 30));
 
-            Mat dst = new Mat();
 
-            ImageOperation selType = ImageOperation.OpAbDiff;
+            ImageOperation selType = (ImageOperation)OpcomboBox.SelectedIndex;
 
             switch (selType)
             {
@@ -91,11 +155,14 @@ namespace PixelPainter
                     break;
             }
 
-            string strOperation = selType.ToString();
+            // OpenCvSharp의 Mat을 Bitmap으로 변환하여 PictureBox에 출력
+            pictureBox2.Image = BitmapConverter.ToBitmap(dst);
+            isImageOp = true;
 
-            Cv2.ImShow(strOperation, dst);
-            Cv2.WaitKey(0);
-            Cv2.DestroyAllWindows();
+            // 연산 결과를 TextBox에 출력 (예: Mat의 픽셀 평균값)
+            Scalar mean = Cv2.Mean(dst); // Mat의 평균값 계산
+            textBox1.Text = $"Mean: {mean.Val0:F2}, {mean.Val1:F2}, {mean.Val2:F2}";
+
         }
     }
 }

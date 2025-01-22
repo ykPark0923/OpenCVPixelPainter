@@ -16,7 +16,7 @@ namespace PixelPainter
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new editIMG());//Form1에서 메인창 변경
         }
     }
 }
