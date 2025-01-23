@@ -35,7 +35,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.FiltercomboBox = new System.Windows.Forms.ComboBox();
             this.OpcomboBox = new System.Windows.Forms.ComboBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
@@ -46,30 +46,27 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(8, 8);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pictureBox1.Location = new System.Drawing.Point(11, 12);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(210, 196);
+            this.pictureBox1.Size = new System.Drawing.Size(300, 294);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Location = new System.Drawing.Point(235, 8);
-            this.pictureBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pictureBox2.Location = new System.Drawing.Point(336, 12);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(210, 196);
+            this.pictureBox2.Size = new System.Drawing.Size(300, 294);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 1;
             this.pictureBox2.TabStop = false;
             // 
             // openBTN
             // 
-            this.openBTN.Location = new System.Drawing.Point(151, 221);
-            this.openBTN.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.openBTN.Location = new System.Drawing.Point(216, 332);
             this.openBTN.Name = "openBTN";
-            this.openBTN.Size = new System.Drawing.Size(52, 21);
+            this.openBTN.Size = new System.Drawing.Size(74, 32);
             this.openBTN.TabIndex = 2;
             this.openBTN.Text = "열기";
             this.openBTN.UseVisualStyleBackColor = true;
@@ -77,10 +74,9 @@
             // 
             // saveBTN
             // 
-            this.saveBTN.Location = new System.Drawing.Point(385, 221);
-            this.saveBTN.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.saveBTN.Location = new System.Drawing.Point(550, 332);
             this.saveBTN.Name = "saveBTN";
-            this.saveBTN.Size = new System.Drawing.Size(52, 21);
+            this.saveBTN.Size = new System.Drawing.Size(74, 32);
             this.saveBTN.TabIndex = 3;
             this.saveBTN.Text = "저장";
             this.saveBTN.UseVisualStyleBackColor = true;
@@ -90,43 +86,49 @@
             // 
             this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.comboBox2);
+            this.groupBox1.Controls.Add(this.FiltercomboBox);
             this.groupBox1.Controls.Add(this.OpcomboBox);
-            this.groupBox1.Location = new System.Drawing.Point(449, 8);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Location = new System.Drawing.Point(641, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.groupBox1.Size = new System.Drawing.Size(231, 196);
+            this.groupBox1.Size = new System.Drawing.Size(330, 294);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "group";
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(51, 98);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox1.Location = new System.Drawing.Point(73, 147);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(176, 21);
+            this.textBox1.Size = new System.Drawing.Size(250, 28);
             this.textBox1.TabIndex = 3;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 105);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Location = new System.Drawing.Point(9, 158);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 12);
+            this.label1.Size = new System.Drawing.Size(62, 18);
             this.label1.TabIndex = 2;
             this.label1.Text = "연산값";
             // 
-            // comboBox2
+            // FiltercomboBox
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(8, 62);
-            this.comboBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(134, 20);
-            this.comboBox2.TabIndex = 1;
+            this.FiltercomboBox.FormattingEnabled = true;
+            this.FiltercomboBox.Items.AddRange(new object[] {
+            "FilterBlur",
+            "FilterBoxFilter",
+            "FilterMedianBlur",
+            "FilterGaussianBlur",
+            "FilterBilateral",
+            "FilterSobel",
+            "FilterScharr",
+            "FilterLaplacian",
+            "FilterCanny"});
+            this.FiltercomboBox.Location = new System.Drawing.Point(11, 93);
+            this.FiltercomboBox.Name = "FiltercomboBox";
+            this.FiltercomboBox.Size = new System.Drawing.Size(190, 26);
+            this.FiltercomboBox.TabIndex = 1;
+            this.FiltercomboBox.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // OpcomboBox
             // 
@@ -139,11 +141,15 @@
             "OpMax",
             "OpMin",
             "OpAbs",
-            "OpAbDiff"});
-            this.OpcomboBox.Location = new System.Drawing.Point(8, 33);
-            this.OpcomboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            "OpAbDiff",
+            "and",
+            "or",
+            "xor",
+            "not",
+            "compare"});
+            this.OpcomboBox.Location = new System.Drawing.Point(11, 50);
             this.OpcomboBox.Name = "OpcomboBox";
-            this.OpcomboBox.Size = new System.Drawing.Size(134, 20);
+            this.OpcomboBox.Size = new System.Drawing.Size(190, 26);
             this.OpcomboBox.TabIndex = 0;
             this.OpcomboBox.SelectedIndexChanged += new System.EventHandler(this.OpcomboBox_SelectedIndexChanged);
             // 
@@ -153,15 +159,14 @@
             // 
             // editIMG
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(703, 300);
+            this.ClientSize = new System.Drawing.Size(1004, 450);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.saveBTN);
             this.Controls.Add(this.openBTN);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.pictureBox1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "editIMG";
             this.Text = "editIMG";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -181,7 +186,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox FiltercomboBox;
         private System.Windows.Forms.ComboBox OpcomboBox;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;

@@ -11,6 +11,11 @@ using System.Windows.Forms;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
 
+
+
+//콤보박스를 넣어서 칼라를 모노로 바꾸는 필터추가
+
+
 namespace PixelPainter
 {   
     
@@ -23,7 +28,26 @@ namespace PixelPainter
         OpMax,
         OpMin,
         OpAbs,
-        OpAbDiff
+        OpAbDiff,
+        and,
+        or,
+        xor,
+        not,
+        compare,
+    }
+
+    enum ImageFilter
+    {
+        FilterBlur = 0,
+        FilterBoxFilter,
+        FilterMedianBlur,
+        FilterGaussianBlur,
+        FilterBilateral,
+        FilterSobel,
+        FilterScharr,
+        FilterLaplacian,
+        FilterCanny,
+
     }
 
 
@@ -36,6 +60,7 @@ namespace PixelPainter
 
         private bool isImageLoaded = false; //불러온이미지없이 연산시 예외처리
         private bool isImageOp = false;     //저장할 연산이미지없을시 예외처리
+        Mat blur = new Mat();
         Mat dst = new Mat();
 
         private void openBTN_Click(object sender, EventArgs e)
@@ -153,6 +178,21 @@ namespace PixelPainter
                     Cv2.Multiply(src1, src2, matMul);
                     Cv2.Absdiff(src1, matMul, dst);
                     break;
+                case ImageOperation.and:
+                    Cv2.BitwiseAnd(src1, src2, dst);
+                    break;
+                case ImageOperation.or:
+                    Cv2.BitwiseOr(src1, src2, dst);
+                    break;
+                case ImageOperation.xor:
+                    Cv2.BitwiseXor(src1, src2, dst);
+                    break;
+                case ImageOperation.not:
+                    Cv2.BitwiseNot(src1, dst);
+                    break;
+                case ImageOperation.compare:
+                    Cv2.Compare(src1, src2, dst, CmpType.EQ);
+                    break;
             }
 
             // OpenCvSharp의 Mat을 Bitmap으로 변환하여 PictureBox에 출력
@@ -163,6 +203,65 @@ namespace PixelPainter
             Scalar mean = Cv2.Mean(dst); // Mat의 평균값 계산
             textBox1.Text = $"Mean: {mean.Val0:F2}, {mean.Val1:F2}, {mean.Val2:F2}";
 
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!isImageLoaded)
+            {
+                MessageBox.Show("먼저 이미지를 열어주세요.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            Mat src1 = Cv2.ImRead(openFileDialog1.FileName);
+            //Mat src = Cv2.ImRead("sparkler.png", ImreadModes.ReducedColor2);
+            Mat src2 = new Mat(src1.Size(), MatType.CV_8UC3, new Scalar(0, 0, 30));
+
+            Cv2.GaussianBlur(src1, blur, new OpenCvSharp.Size(3, 3), 1, 0, BorderTypes.Default);
+
+            ImageFilter selType = (ImageFilter)FiltercomboBox.SelectedIndex;
+
+            switch (selType)
+            {
+                case ImageFilter.FilterBlur:
+                    Cv2.Blur(src1, dst, new OpenCvSharp.Size(9, 9), new OpenCvSharp.Point(-1, -1), BorderTypes.Default);
+                    break;
+                case ImageFilter.FilterBoxFilter:
+                    Cv2.BoxFilter(src1, dst, MatType.CV_8UC3, new OpenCvSharp.Size(9, 9), new OpenCvSharp.Point(-1, -1), true, BorderTypes.Default);
+                    break;
+                case ImageFilter.FilterMedianBlur:
+                    Cv2.MedianBlur(src1, dst, 9);
+                    break;
+                case ImageFilter.FilterGaussianBlur:
+                    Cv2.GaussianBlur(src1, dst, new OpenCvSharp.Size(9, 9), 1, 1, BorderTypes.Default);
+                    break;
+                case ImageFilter.FilterBilateral:
+                    Cv2.BilateralFilter(src1, dst, 9, 3, 3, BorderTypes.Default);
+                    break;
+                case ImageFilter.FilterSobel:
+                    Cv2.Sobel(blur, dst, MatType.CV_32F, 1, 0, ksize: 3, scale: 1, delta: 0, BorderTypes.Default);
+                    dst.ConvertTo(dst, MatType.CV_8UC1);
+                    break;
+                case ImageFilter.FilterScharr:
+                    Cv2.Scharr(blur, dst, MatType.CV_32F, 1, 0, scale: 1, delta: 0, BorderTypes.Default);
+                    dst.ConvertTo(dst, MatType.CV_8UC1);
+                    break;
+                case ImageFilter.FilterLaplacian:
+                    Cv2.Laplacian(blur, dst, MatType.CV_32F, ksize: 3, scale: 1, delta: 0, BorderTypes.Default);
+                    dst.ConvertTo(dst, MatType.CV_8UC1);
+                    break;
+                case ImageFilter.FilterCanny:
+                    Cv2.Canny(blur, dst, 100, 200, 3, true);
+                    break;
+            }
+
+            // OpenCvSharp의 Mat을 Bitmap으로 변환하여 PictureBox에 출력
+            pictureBox2.Image = BitmapConverter.ToBitmap(dst);
+            isImageOp = true;
+
+            // 연산 결과를 TextBox에 출력 (예: Mat의 픽셀 평균값)
+            Scalar mean = Cv2.Mean(dst); // Mat의 평균값 계산
+            textBox1.Text = $"Mean: {mean.Val0:F2}, {mean.Val1:F2}, {mean.Val2:F2}";
         }
     }
 }
