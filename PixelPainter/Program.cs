@@ -16,7 +16,15 @@ namespace PixelPainter
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());//Form1에서 메인창 변경
+
+            // Form1을 먼저 실행
+            Form1 mainForm = new Form1();
+
+            // Form1이 실행된 후, editIMG를 모달로 띄운다.
+            editIMG editImageForm = new editIMG();
+            editImageForm.ShowDialog();  // 모달 형식으로 띄우기
+
+            Application.Run(new Form1());
         }
     }
 }
