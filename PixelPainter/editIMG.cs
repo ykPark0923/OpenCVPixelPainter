@@ -13,8 +13,6 @@ using OpenCvSharp.Extensions;
 
 
 
-//콤보박스를 넣어서 칼라를 모노로 바꾸는 필터추가
-
 
 namespace PixelPainter
 {   
@@ -48,6 +46,12 @@ namespace PixelPainter
         FilterLaplacian,
         FilterCanny,
 
+    }
+
+    enum ImageColor
+    {
+        Color = 0,
+        Mono,
     }
 
 
@@ -252,6 +256,39 @@ namespace PixelPainter
                     break;
                 case ImageFilter.FilterCanny:
                     Cv2.Canny(blur, dst, 100, 200, 3, true);
+                    break;
+            }
+
+            // OpenCvSharp의 Mat을 Bitmap으로 변환하여 PictureBox에 출력
+            pictureBox2.Image = BitmapConverter.ToBitmap(dst);
+            isImageOp = true;
+
+            // 연산 결과를 TextBox에 출력 (예: Mat의 픽셀 평균값)
+            Scalar mean = Cv2.Mean(dst); // Mat의 평균값 계산
+            textBox1.Text = $"Mean: {mean.Val0:F2}, {mean.Val1:F2}, {mean.Val2:F2}";
+        }
+
+        private void ColorcomboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!isImageLoaded)
+            {
+                MessageBox.Show("먼저 이미지를 열어주세요.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            Mat src1 = Cv2.ImRead(openFileDialog1.FileName);
+            Mat src2 = new Mat(src1.Size(), MatType.CV_8UC3, new Scalar(0, 0, 30));
+
+
+            ImageColor selType = (ImageColor)ColorcomboBox.SelectedIndex;
+
+            switch (selType)
+            {
+                case ImageColor.Color:
+                    dst = src1.Clone();
+                    break;
+                case ImageColor.Mono:
+                    Cv2.CvtColor(src1, dst, ColorConversionCodes.BGR2GRAY);
                     break;
             }
 
